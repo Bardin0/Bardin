@@ -1,0 +1,62 @@
+services:
+    postgres: 
+        image: postgres:17
+        container_name: bardin-postgres
+        restart: unless-stopped
+
+        environment: 
+            POSTGRES_DB: bardin
+            POSTGRES_USER: bardin
+            POSTGRES_PASSWORD: dev_password
+        
+        ports:
+            - "5432:5432"
+        
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+    backend:
+        build: ./app/backend
+        container_name: bardin-backend
+
+        ports:
+            - "8080:8080"
+
+        depends_on:
+            - postgres 
+        
+        environment: 
+            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bardin
+            SPRING_DATASOURCE_USERNAME: bardin
+            SPRING_DATASOURCE_PASSWORD: dev_password
+
+        develop:
+            watch:
+                - action: rebuild
+                  path: ./app/backend/src
+                - action: sync
+                  path: ./app/backend/pom.xml
+                  target: /app/pom.xml
+    
+    frontend:
+        build: ./app/frontend
+        container_name: bardin-frontend
+
+        ports: 
+            - "5173:5173"
+        
+        depends_on:
+            - backend
+
+        develop:
+            watch:
+                - action: sync
+                  path: ./app/frontend/src
+                  target: /app/src
+                  ignore:
+                    - node_modules/
+                - action: rebuild
+                  path: ./app/frontend/package.json
+
+volumes:
+    postgres_data:
