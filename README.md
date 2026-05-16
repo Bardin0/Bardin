@@ -102,14 +102,14 @@ Initial development priorities:
 ## Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/bardin.git
-cd bardin
+git clone https://github.com/yourusername/Bardin.git
+cd Bardin
 ```
 
 ## Start Development Environment
 
 ```bash
-docker compose up --build
+docker compose up
 ```
 
 ---
