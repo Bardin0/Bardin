@@ -8,11 +8,12 @@ COPY build.gradle .
 COPY settings.gradle .
 
 RUN chmod +x gradlew
-
 RUN ./gradlew dependencies
 
 COPY . .
 
+# Give permissions again in case the copy removed it
+RUN chmod +x gradlew 
 RUN ./gradlew build -x test
 
 FROM eclipse-temurin:25-jre

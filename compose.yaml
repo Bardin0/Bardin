@@ -37,6 +37,20 @@ services:
                 - action: sync
                   path: ./app/backend/pom.xml
                   target: /app/pom.xml
+
+    pgadmin:
+      image: dpage/pgadmin4
+      container_name: bardin-pgadmin
+
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@mail.com
+        PGADMIN_DEFAULT_PASSWORD: adminpassword
+
+      ports:
+        - "5050:80"
+
+      depends_on:
+        - postgres
     
     frontend:
         build: ./app/frontend
