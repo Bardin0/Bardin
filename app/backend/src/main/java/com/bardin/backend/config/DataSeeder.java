@@ -2,12 +2,14 @@ package com.bardin.backend.config;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.bardin.backend.auth.User;
 import com.bardin.backend.auth.enums.Role;
 import com.bardin.backend.auth.repository.UserRepository;
 
+@Configuration
 public class DataSeeder {
    
     @Bean
@@ -16,6 +18,7 @@ public class DataSeeder {
         PasswordEncoder passwordEncoder
     ) {
         return args -> {
+            System.out.println("Data Seeder Started");
             if (!userRepository.existsByUsername("admin")) {
                 
                 User admin = new User();
@@ -31,6 +34,8 @@ public class DataSeeder {
                 userRepository.save(admin);
 
                 System.out.println("Admin user created");
+            }else{
+                System.out.println("Admin user found.");
             }
         };
     }
