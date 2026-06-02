@@ -1,5 +1,7 @@
 package com.bardin.backend.config;
 
+import java.time.Instant;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +32,8 @@ public class DataSeeder {
                 );
 
                 admin.setRole(Role.ADMIN);
+
+                admin.setCreatedAt(Instant.now());
 
                 userRepository.save(admin);
 

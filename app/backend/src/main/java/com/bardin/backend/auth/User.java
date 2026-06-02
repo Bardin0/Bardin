@@ -36,10 +36,11 @@ public class User {
 
     public User(){}
 
-    public User(String username, String password, Role role) {
+    public User(String username, String password, Role role, Instant createdAt) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -79,9 +80,10 @@ public class User {
     }
 
     public String toString() {
-         return "User { " +
-         "id: " + this.id +
-         "username: " + this.username +
-         "}";
+        return "User { " +
+        "id: " + this.id +
+        "username: " + this.username +
+        "created_at: " + this.createdAt + 
+        "}";
     }
 }

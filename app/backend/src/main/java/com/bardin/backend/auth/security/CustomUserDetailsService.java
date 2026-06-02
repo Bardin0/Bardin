@@ -3,11 +3,13 @@ package com.bardin.backend.auth.security;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import com.bardin.backend.auth.User;
 
 import com.bardin.backend.auth.repository.UserRepository;
 
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
