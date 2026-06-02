@@ -12,5 +12,4 @@ public class TestController {
     public String health() {
          return "Bardin backend running";
     }
-
 }
