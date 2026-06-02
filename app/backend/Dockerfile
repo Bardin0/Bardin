@@ -8,7 +8,7 @@ COPY build.gradle .
 COPY settings.gradle .
 
 RUN chmod +x gradlew
-RUN ./gradlew dependencies
+RUN ./gradlew --configuration-cache dependencies
 
 COPY . .
 
