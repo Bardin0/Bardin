@@ -7,11 +7,20 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.bardin.backend.auth.security.JwtAuthenticationFilter;
 
 import jakarta.annotation.PostConstruct;
 
 @Configuration
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
    
     @PostConstruct
     public void init(){
@@ -30,6 +39,9 @@ public class SecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .authenticated()
+            ).addFilterBefore(
+                jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class
             ); 
         return http.build();
 

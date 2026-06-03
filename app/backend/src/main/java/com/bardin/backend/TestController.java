@@ -12,4 +12,9 @@ public class TestController {
     public String health() {
          return "Bardin backend running";
     }
+
+    @GetMapping("/admin/private")
+    public String privateContent(){
+        return "Private stuff!";
+    }
 }
