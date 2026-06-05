@@ -13,23 +13,21 @@ import com.bardin.backend.auth.repository.UserRepository;
 
 @Configuration
 public class DataSeeder {
-   
+
     @Bean
     CommandLineRunner seedAdminUser(
-        UserRepository userRepository,
-        PasswordEncoder passwordEncoder
-    ) {
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
         return args -> {
             System.out.println("Data Seeder Started");
             if (!userRepository.existsByUsername("admin")) {
-                
+
                 User admin = new User();
 
                 admin.setUsername("admin");
 
                 admin.setPassword(
-                        passwordEncoder.encode("admin123")
-                );
+                        passwordEncoder.encode("admin123"));
 
                 admin.setRole(Role.ADMIN);
 
@@ -38,7 +36,7 @@ public class DataSeeder {
                 userRepository.save(admin);
 
                 System.out.println("Admin user created");
-            }else{
+            } else {
                 System.out.println("Admin user found.");
             }
         };
