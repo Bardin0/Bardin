@@ -11,8 +11,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.bardin.backend.auth.security.JwtAuthenticationFilter;
 
-import jakarta.annotation.PostConstruct;
-
 @Configuration
 public class SecurityConfig {
 
@@ -22,18 +20,13 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    @PostConstruct
-    public void init() {
-        System.out.println("----- Security Config Loaded -----");
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
-                        .permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest()
                         .authenticated())
                 .addFilterBefore(
