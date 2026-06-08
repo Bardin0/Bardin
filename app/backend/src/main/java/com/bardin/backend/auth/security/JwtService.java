@@ -72,14 +72,14 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser()                 // Changed from parserBuilder()
-                .verifyWith(getSignInKey())  // Changed from setSigningKey()
+        return Jwts.parser()                 
+                .verifyWith(getSignInKey())  
                 .build()
-                .parseSignedClaims(token)    // Changed from parseClaimsJws()
-                .getPayload();               // Changed from getBody()
+                .parseSignedClaims(token)   
+                .getPayload();              
     }
 
-    private SecretKey getSignInKey() {       // Return type changed to SecretKey
+    private SecretKey getSignInKey() {     
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
