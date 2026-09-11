@@ -8,18 +8,19 @@ COPY build.gradle .
 COPY settings.gradle .
 
 RUN chmod +x gradlew
-
-RUN ./gradlew dependencies
+RUN ./gradlew --configuration-cache dependencies
 
 COPY . .
 
+# Give permissions again in case the copy removed it
+RUN chmod +x gradlew 
 RUN ./gradlew build -x test
 
 FROM eclipse-temurin:25-jre
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*.jar app.jar
+COPY --from=builder /app/build/libs/app.jar app.jar
 
 EXPOSE 8080
 

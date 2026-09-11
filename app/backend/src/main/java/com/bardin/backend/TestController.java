@@ -10,7 +10,11 @@ public class TestController {
 
     @GetMapping("/health")
     public String health() {
-         return "Bardin backend running";
+        return "Bardin backend running";
     }
 
+    @GetMapping("/admin/private")
+    public String privateContent() {
+        return "Private stuff!";
+    }
 }
