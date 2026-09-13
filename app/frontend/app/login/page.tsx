@@ -1,6 +1,6 @@
 import Image from 'next/image';
-import TextInput from '../components/TextInput/TextInput.component.tsx';
-import ButtonGlow from '../components/ButtonGlow/ButtonGlow.tsx';
+import TextInput from '../components/TextInput/TextInput.component';
+import ButtonGlow from '../components/ButtonGlow/ButtonGlow';
 
 export default function LoginPage() {
 

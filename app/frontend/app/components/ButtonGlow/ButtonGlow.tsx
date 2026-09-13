@@ -1,4 +1,4 @@
-import { ButtonGlowProps } from "../../types/ButtonGlowProps.ts";
+import { ButtonGlowProps } from "../../types/ButtonGlowProps";
 
 export default function ButtonGlow({ text, type }: ButtonGlowProps) {
     return (

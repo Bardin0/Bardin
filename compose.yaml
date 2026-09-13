@@ -32,9 +32,10 @@ services:
 
         develop:
             watch:
-                - action: rebuild
+                - action: sync+restart 
                   path: ./app/backend/src
-                - action: sync
+                  target: /app/src
+                - action: rebuild
                   path: ./app/backend/pom.xml
                   target: /app/pom.xml
 
@@ -71,6 +72,7 @@ services:
                     - node_modules/
                 - action: rebuild
                   path: ./app/frontend/package.json
+                  target: /app/package.json
 
 volumes:
     postgres_data:
