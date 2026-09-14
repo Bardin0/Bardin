@@ -1,14 +1,18 @@
 package com.bardin.backend.auth.controller;
 
 import com.bardin.backend.auth.dto.LoginRequest;
-import com.bardin.backend.auth.dto.LoginResponse;
-import com.bardin.backend.auth.security.CustomUserDetailsService;
-import com.bardin.backend.auth.security.JwtService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,32 +23,45 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailsService userDetailsService;
-    private final JwtService jwtService;
+    private final SecurityContextRepository securityContextRepository;
 
     public AuthController(
-        AuthenticationManager authenticationManager, 
-        CustomUserDetailsService userDetailsService, 
-        JwtService jwtService
+        AuthenticationManager authenticationManager,
+        SecurityContextRepository securityContextRepository
     ){
         this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.jwtService = jwtService;
+        this.securityContextRepository = securityContextRepository;
     }
    
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<Void> login(
+            @RequestBody LoginRequest request,
+            HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse) {
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        UserDetails user = userDetailsService.loadUserByUsername(request.getUsername());
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+        securityContextRepository.saveContext(context, httpRequest, httpResponse);
 
-        String jwt = jwtService.generateToken(user);
-
-        return ResponseEntity.ok(
-            new LoginResponse(jwt)
-        );
-        
+        return ResponseEntity.ok().build();
     }
-    
+
+    @GetMapping("/csrf")
+    public CsrfToken csrf(CsrfToken csrfToken) {
+        return csrfToken;
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        SecurityContextHolder.clearContext();
+        var session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return ResponseEntity.noContent().build();
+    }
 }

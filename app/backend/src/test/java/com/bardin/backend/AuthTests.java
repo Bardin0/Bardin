@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,7 +24,6 @@ import org.springframework.web.client.RestClientResponseException;
 
 import com.bardin.backend.auth.User;
 import com.bardin.backend.auth.dto.LoginRequest;
-import com.bardin.backend.auth.dto.LoginResponse;
 import com.bardin.backend.auth.enums.Role;
 import com.bardin.backend.auth.repository.UserRepository;
 
@@ -61,18 +62,17 @@ public class AuthTests {
     }
 
     @Test
-    public void getJWTOnValidLogin() {
+    public void validLoginCreatesSession() {
 
         RestClient client = RestClient.builder().baseUrl("http://localhost:" + port).build();
 
-        // Get a valid user
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsername(TEST_ADMIN_USERNAME);
         loginRequest.setPassword(TEST_ADMIN_PASSWORD);
-        LoginResponse response = client.post().uri("/api/auth/login").body(loginRequest).retrieve()
-                .body(LoginResponse.class);
+        ResponseEntity<Void> response = login(client, loginRequest);
 
-        assertThat(response.getToken()).isNotBlank();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(cookieValue(response.getHeaders().get(HttpHeaders.SET_COOKIE), "JSESSIONID")).isNotBlank();
 
     }
 
@@ -88,15 +88,15 @@ public class AuthTests {
         loginRequest.setUsername(username);
         loginRequest.setPassword(password);
 
-        RestClientResponseException ex = assertThrows(RestClientResponseException.class, () -> client.post()
-                .uri("/api/auth/login").body(loginRequest).retrieve().body(LoginResponse.class));
+        RestClientResponseException ex = assertThrows(RestClientResponseException.class,
+            () -> login(client, loginRequest));
 
         assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
 
     }
 
     @Test
-    public void GetProtectedEndpointWithJWT() {
+    public void getProtectedEndpointWithSession() {
 
         RestClient client = RestClient.builder()
                 .baseUrl("http://localhost:" + port)
@@ -106,17 +106,12 @@ public class AuthTests {
         loginRequest.setUsername(TEST_ADMIN_USERNAME);
         loginRequest.setPassword(TEST_ADMIN_PASSWORD);
 
-        LoginResponse loginResponse = client.post()
-                .uri("/api/auth/login")
-                .body(loginRequest)
-                .retrieve()
-                .body(LoginResponse.class);
-
-        String token = loginResponse.getToken();
+        ResponseEntity<Void> loginResponse = login(client, loginRequest);
+        String sessionCookie = cookieHeader(loginResponse.getHeaders().get(HttpHeaders.SET_COOKIE), "JSESSIONID");
 
         ResponseEntity<String> response = client.get()
                 .uri("/admin/health")
-                .header("Authorization", "Bearer " + token)
+            .header(HttpHeaders.COOKIE, sessionCookie)
                 .retrieve()
                 .toEntity(String.class);
 
@@ -124,8 +119,38 @@ public class AuthTests {
     }
 
     @Test
-    public void GetProtectedEndpointWithoutJWT() {
+    public void getProtectedEndpointWithoutSession() {
+        RestClient client = RestClient.builder()
+                .baseUrl("http://localhost:" + port)
+                .build();
 
+        RestClientResponseException ex = assertThrows(RestClientResponseException.class, () -> client.get()
+                .uri("/admin/health")
+                .retrieve()
+                .toEntity(String.class));
+
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode());
+    }
+
+    private ResponseEntity<Void> login(RestClient client, LoginRequest request) {
+        return client.post()
+                .uri("/api/auth/login")
+                .body(request)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    private String cookieHeader(List<String> setCookies, String name) {
+        return name + "=" + cookieValue(setCookies, name);
+    }
+
+    private String cookieValue(List<String> setCookies, String name) {
+        String prefix = name + "=";
+        return setCookies.stream()
+                .filter(cookie -> cookie.startsWith(prefix))
+                .map(cookie -> cookie.substring(prefix.length(), cookie.indexOf(';')))
+                .findFirst()
+                .orElseThrow();
     }
 
 }
