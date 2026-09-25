@@ -1,22 +1,39 @@
-export default function VisitorCard({ visitor }) {
+"use client";
+
+import Image from "next/image";
+import type { Visitor } from "./VisitorList";
+
+interface VisitorCardProps {
+  visitor: Visitor;
+}
+
+export default function VisitorCard({ visitor }: VisitorCardProps) {
   const handleEdit = () => {
-    // TODO: open visitor editing page/modal
     console.log("Edit visitor:", visitor.id);
   };
 
   const handleSignOut = () => {
-    // TODO: call backend sign-out endpoint
     console.log("Sign out visitor:", visitor.id);
   };
 
   return (
     <div className="flex items-center justify-between px-6 py-4">
       <div className="flex items-center gap-4">
-        <img
-          src={visitor.imageUrl}
-          alt={visitor.name}
-          className="h-12 w-12 rounded-full object-cover"
-        />
+        {visitor.imageUrl ? (
+          <Image
+            src={visitor.imageUrl}
+            alt={visitor.name}
+            width={48}
+            height={48}
+            className="h-12 w-12 rounded-full object-cover"
+          />
+        ) : (
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200">
+            <span className="text-gray-500">
+              {visitor.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
 
         <div>
           <p className="font-medium text-gray-900">{visitor.name}</p>

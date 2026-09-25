@@ -1,32 +1,19 @@
-"use client"
-import { useState } from "react";
-import AdminHeader from "../components/AdminHeader";
-import Sidebar from "../components/Sidebar";
-import VisitorList from "../components/VisitorList";
+import AdminHeader from "@/app/components/admin/AdminHeader";
+import Sidebar from "@/app/components/admin/Sidebar";
+import VisitorList from "@/app/components/admin/VisitorList";
 
-export default function AdminHome() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  // Replace this with the authenticated user's data
+export default function AdminPage() {
   const user = {
     name: "Michael",
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <AdminHeader
-        user={user}
-        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-      />
+      <AdminHeader user={user} />
+      <Sidebar />
 
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-      <main
-        className={`transition-all duration-300 ${
-          sidebarOpen ? "ml-72" : "ml-0"
-        }`}
-      >
-        <div className="mx-auto max-w-7xl px-8 py-10">
+      <main className="px-8 py-10">
+        <div className="mx-auto max-w-7xl">
           <section className="mb-8">
             <h1 className="text-3xl font-semibold text-gray-900">
               Welcome, {user.name}

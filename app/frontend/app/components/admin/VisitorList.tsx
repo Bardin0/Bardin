@@ -1,19 +1,18 @@
+"use client";
+
 import VisitorCard from "./VisitorCard";
 
-const visitors = [
-  {
-    id: 1,
-    name: "John Smith",
-    imageUrl: "/images/default-user.png",
-  },
-  {
-    id: 2,
-    name: "Jane Doe",
-    imageUrl: "/images/default-user.png",
-  },
-];
+export interface Visitor {
+  id: number;
+  name: string;
+  imageUrl: string | null;
+}
 
-export default function VisitorList() {
+interface VisitorListProps {
+  visitors?: Visitor[];
+}
+
+export default function VisitorList({ visitors = [] }: VisitorListProps) {
   return (
     <section className="rounded-lg border bg-white shadow-sm">
       <div className="border-b px-6 py-4">

@@ -1,4 +1,11 @@
-export default function Sidebar({ open, onClose }) {
+"use client";
+
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ open, onClose }: SidebarProps) {
   return (
     <>
       {open && (
@@ -10,13 +17,19 @@ export default function Sidebar({ open, onClose }) {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center border-b px-6">
+        <div className="flex h-16 items-center justify-between border-b px-6">
           <span className="text-xl font-semibold text-gray-900">Bardin</span>
+
+          <button
+            onClick={onClose}
+            className="rounded-md p-2 text-gray-500 hover:bg-gray-100"
+            aria-label="Close navigation menu"
+          >
+            ×
+          </button>
         </div>
 
         <nav className="p-4">
-          {/* Navigation options can be populated later */}
-
           <div className="rounded-md px-4 py-3 text-gray-400">Dashboard</div>
 
           <div className="rounded-md px-4 py-3 text-gray-400">Visitors</div>
