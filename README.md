@@ -36,9 +36,7 @@ The system is focused on:
 
 ### Employee & Host Workflow
 - Host notifications
-- Approval workflows
 - Visitor status tracking
-- Department mapping
 
 ### Security & Compliance
 - Audit logs
@@ -46,12 +44,6 @@ The system is focused on:
 - Session management
 - Access event tracking
 - Data retention support
-
-### Badge & Access Handling
-- Badge printing
-- Badge assignment tracking
-- Temporary access passes
-- QR code support
 
 ### Administrative Tools
 - Dashboard & analytics
@@ -82,37 +74,9 @@ Initial development priorities:
 
 - Core authentication system
 - Visitor registration workflow
-- Database schema design
 - Role/permission system
 - Notification infrastructure
 - Dockerized local development environment
-
----
-
-# Local Development
-
-## Prerequisites
-
-- Docker
-- Docker Compose
-- Java 25+
-- Node.js
-- PostgreSQL
-
-## Clone Repository
-
-```bash
-git clone https://github.com/yourusername/Bardin.git
-cd Bardin
-```
-
-## Start Development Environment
-
-```bash
-docker compose up
-```
-
----
 
 # Roadmap
 
